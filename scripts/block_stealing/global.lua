@@ -4,6 +4,21 @@ local acti = require('openmw.interfaces').Activation
 
 local actorSneakStates = {}
 
+local function isActivationAllowed(obj, actor)
+    local ownerData = obj.owner
+    if (ownerData.recordId) then
+        return (ownerData.recordId == actor.recordId)
+    elseif (ownerData.factionId) then
+        local requiredRank = ownerData.factionRank or 1
+        local actorRank = types.NPC.getFactionRank(actor, ownerData.factionId)
+        if (types.NPC.isExpelled(actor, ownerData.factionId)) then
+            actorRank = 0
+        end
+        return (actorRank >= requiredRank)
+    end
+    return true
+end
+
 local function onActivate(obj, actor)
     if (actor.type ~= types.Player) then return end
 
@@ -11,11 +26,10 @@ local function onActivate(obj, actor)
 
     if (actorSneakStates[actor.recordId]) then return end
 
-    if (not obj.owner.recordId) then return end
-    if (obj.owner.recordId == actor.recordId) then return end
+    if (isActivationAllowed(obj, actor)) then return end
 
     actor:sendEvent('ShowMessage', {
-        message = 'Blocked activation of ' .. obj.recordId .. ' owned by ' .. obj.owner.recordId
+        message = 'Blocked activation of ' .. obj.recordId
     })
     return false
 end
