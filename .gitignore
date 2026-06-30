@@ -1,0 +1,18 @@
+# Morrowind
+*.esm
+*.esp
+
+# OpenMW
+*.omwaddon
+
+# OpenMW Player
+*.omwaddon.esp
+*.omwscripts.esp
+
+# MO2
+meta.ini
+
+# IDE
+.idea/
+.run/
+*.user
