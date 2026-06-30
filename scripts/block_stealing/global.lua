@@ -5,6 +5,8 @@ local acti = require('openmw.interfaces').Activation
 local function onActivate(obj, actor)
     if (actor.type ~= types.Player) then return end
 
+    if (obj.type == types.Book) then return end
+
     if (not obj.owner.recordId) then return end
     if (obj.owner.recordId == actor.recordId) then return end
 
