@@ -2,10 +2,14 @@ local core = require('openmw.core')
 local types = require('openmw.types')
 local acti = require('openmw.interfaces').Activation
 
+local actorSneakStates = {}
+
 local function onActivate(obj, actor)
     if (actor.type ~= types.Player) then return end
 
     if (obj.type == types.Book) then return end
+
+    if (actorSneakStates[actor.recordId]) then return end
 
     if (not obj.owner.recordId) then return end
     if (obj.owner.recordId == actor.recordId) then return end
@@ -22,4 +26,10 @@ for _, type in pairs(types) do
     end
 end
 
-return {}
+return {
+    eventHandlers = {
+        ['BlockStealing:ActorSneakChanged'] = function(state)
+            actorSneakStates[state.recordId] = state.sneaking
+        end
+    }
+}
