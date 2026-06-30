@@ -28,8 +28,9 @@ local function onActivate(obj, actor)
 
     if (isActivationAllowed(obj, actor)) then return end
 
+    local objName = obj.type.record(obj.recordId).name
     actor:sendEvent('ShowMessage', {
-        message = 'Blocked activation of ' .. obj.recordId
+        message = '[' .. objName .. '] use is blocked'
     })
     return false
 end
