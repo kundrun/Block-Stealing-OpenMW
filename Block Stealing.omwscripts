@@ -1,2 +1,4 @@
 GLOBAL: scripts/block_stealing/global.lua
 PLAYER: scripts/block_stealing/player.lua
+
+GLOBAL: scripts/block_stealing/settings.lua

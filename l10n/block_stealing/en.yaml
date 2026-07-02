@@ -1,0 +1,22 @@
+# Page
+settings_name_page: 'Block Stealing'
+settings_desc_page: 'Configure blocking behaviour for owned items, containers, and doors'
+
+# Group: Behaviour
+settings_name_group_behaviour: 'Behaviour'
+## Settings
+settings_name_gold: 'Gold'
+settings_name_books: 'Books'
+settings_name_containers: 'Containers'
+settings_name_doors: 'Doors'
+settings_name_other: 'Other'
+
+# Group: Misc
+settings_name_group_misc: 'Other Settings'
+## Settings
+settings_name_notifications: 'Show notifications'
+
+# Selection Options
+settings_option_block: 'Block always'
+settings_option_sneak: 'Allow if sneaking'
+settings_option_allow: 'Allow always'

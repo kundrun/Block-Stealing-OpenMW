@@ -1,6 +1,18 @@
 local core = require('openmw.core')
 local self = require('openmw.self')
+local I = require('openmw.interfaces')
 local C = require('scripts.block_stealing.util.constants')
+
+--region Menu Registration
+
+I.Settings.registerPage {
+    key         = C.SETTINGS_KEY_PAGE,
+    l10n        = C.L10N_KEY,
+    name        = C.SETTINGS_NAME_PAGE,
+    description = C.SETTINGS_DESC_PAGE
+}
+
+--endregion Menu Registration
 
 --region Sneak State
 
