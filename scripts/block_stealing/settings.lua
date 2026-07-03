@@ -1,5 +1,22 @@
+local storage = require('openmw.storage')
 local I = require('openmw.interfaces')
 local C = require('scripts.block_stealing.util.constants')
+
+--region Accessors
+
+local function getStoredSetting(section, key)
+    return storage.globalSection(section):get(key)
+end
+
+local function getBehaviour(objType)
+    return getStoredSetting(C.SETTINGS_KEY_GROUP_BEHAVIOUR, objType)
+end
+
+local function getNotifications()
+    return getStoredSetting(C.SETTINGS_KEY_GROUP_MISC, C.SETTINGS_KEY_NOTIFICATIONS)
+end
+
+--endregion Accessors
 
 --region Menu Registration
 
@@ -102,3 +119,16 @@ I.Settings.registerGroup {
 }
 
 --endregion Menu Registration
+
+--region Exported Interface
+
+return {
+    interfaceName = C.MOD_KEY .. '_Settings',
+    interface     = {
+        version          = 1,
+        getBehaviour     = getBehaviour,
+        getNotifications = getNotifications
+    }
+}
+
+--endregion Exported Interface
