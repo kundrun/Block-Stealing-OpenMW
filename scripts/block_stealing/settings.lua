@@ -1,4 +1,5 @@
 local storage = require('openmw.storage')
+local async = require('openmw.async')
 local I = require('openmw.interfaces')
 local C = require('scripts.block_stealing.util.constants')
 
@@ -8,15 +9,50 @@ local function getStoredSetting(section, key)
     return storage.globalSection(section):get(key)
 end
 
+local settingsCache = {}
+
+local function getCachedSetting(section, key)
+    local setting = settingsCache[section .. '.' .. key]
+    if not setting then
+        setting = getStoredSetting(section, key)
+        settingsCache[section .. '.' .. key] = setting
+    end
+    return setting
+end
+
+local function clearCachedSetting(section, key)
+    if not section then return end
+    if key then
+        settingsCache[section .. '.' .. key] = nil
+    else
+        for k, _ in pairs(settingsCache) do
+            -- k.startsWith(section)
+            if k:sub(1, #section) == section then
+                settingsCache[k] = nil
+            end
+        end
+    end
+end
+
 local function getBehaviour(objType)
-    return getStoredSetting(C.SETTINGS_KEY_GROUP_BEHAVIOUR, objType)
+    return getCachedSetting(C.SETTINGS_KEY_GROUP_BEHAVIOUR, objType)
 end
 
 local function getNotifications()
-    return getStoredSetting(C.SETTINGS_KEY_GROUP_MISC, C.SETTINGS_KEY_NOTIFICATIONS)
+    return getCachedSetting(C.SETTINGS_KEY_GROUP_MISC, C.SETTINGS_KEY_NOTIFICATIONS)
 end
 
 --endregion Accessors
+
+--region Update Handlers
+
+storage.globalSection(C.SETTINGS_KEY_GROUP_BEHAVIOUR)
+       :subscribe(async:callback(clearCachedSetting))
+
+storage.globalSection(C.SETTINGS_KEY_GROUP_MISC)
+       :subscribe(async:callback(clearCachedSetting))
+
+--endregion Update Handlers
 
 --region Menu Registration
 
