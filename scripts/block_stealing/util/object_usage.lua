@@ -1,4 +1,5 @@
 local types = require('openmw.types')
+local C = require('scripts.block_stealing.util.constants')
 
 local function isOwner(actor, ownerId)
     return actor.recordId == ownerId
@@ -24,15 +25,41 @@ local function isLawfulUse(obj, actor)
     end
 end
 
-local function allowCrimeUse(obj, actor, controls)
-    if (obj.type == types.Book) then return true end
-    if controls.isSneaking(actor) then return true end
+local function checkCrimeSettings(objType, actor, controls, settings)
+    local behaviour = settings.getBehaviour(objType)
+    if behaviour == C.SETTINGS_OPTION_ALLOW then
+        return true
+    elseif behaviour == C.SETTINGS_OPTION_SNEAK then
+        return controls.isSneaking(actor)
+    else
+        return false
+    end
+end
+
+local function allowCrimeUse(obj, actor, controls, settings)
+    local objType
+    if obj.type == types.Book then
+        objType = C.SETTINGS_KEY_BOOKS
+    elseif obj.type == types.Container then
+        objType = C.SETTINGS_KEY_CONTAINERS
+    elseif obj.type == types.Door then
+        objType = C.SETTINGS_KEY_DOORS
+    elseif obj.recordId == 'gold_001' or
+        obj.recordId == 'gold_005' or
+        obj.recordId == 'gold_010' or
+        obj.recordId == 'gold_025' or
+        obj.recordId == 'gold_100' then
+        objType = C.SETTINGS_KEY_GOLD
+    else
+        objType = C.SETTINGS_KEY_OTHER
+    end
+    return checkCrimeSettings(objType, actor, controls, settings)
 end
 
 local __module = {}
 
-function __module.allowUse(obj, actor, controls)
-    return isLawfulUse(obj, actor) or allowCrimeUse(obj, actor, controls)
+function __module.allowUse(obj, actor, controls, settings)
+    return isLawfulUse(obj, actor) or allowCrimeUse(obj, actor, controls, settings)
 end
 
 return __module

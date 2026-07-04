@@ -6,13 +6,14 @@ local usage = require('scripts.block_stealing.util.object_usage')
 local function onActivate(obj, actor)
     if (actor.type ~= types.Player) then return end
 
-    if usage.allowUse(obj, actor, controls) then return end
+    if usage.allowUse(obj, actor, controls, I.BlockStealing_Settings) then return end
 
-    local objName = obj.type.record(obj.recordId).name
-    actor:sendEvent('ShowMessage', {
-        message = '[' .. objName .. '] use is blocked'
-    })
-
+    if I.BlockStealing_Settings.getNotifications() then
+        local objName = obj.type.record(obj.recordId).name
+        actor:sendEvent('ShowMessage', {
+            message = '[' .. objName .. '] use is blocked'
+        })
+    end
     return false
 end
 
